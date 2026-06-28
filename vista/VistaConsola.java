@@ -1,6 +1,7 @@
 package vista;
 
 import Interfaces.*;
+import modelo.*;
 
 public class VistaConsola implements IVistaCombate {
 

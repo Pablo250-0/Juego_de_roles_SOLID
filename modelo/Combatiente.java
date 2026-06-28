@@ -1,4 +1,4 @@
-package Interfaces;
+package modelo;
 
 public interface Combatiente {
     void atacar(Combatiente objetivo);

@@ -1,19 +1,17 @@
 package modelo;
-import Interfaces.*;
-public class guerrero extends Personaje implements Combatiente {
+// guerrero.java — ya no implements Combatiente, lo hereda de Personaje
+public class guerrero extends Personaje {
     private int fuerza;
     private int armaduraBase;
-    private GuerreroNivel sistemaNivel;
 
     public guerrero(String nombre, int fuerza, int armaduraBase,
-                    Inventario inventario, GuerreroNivel sistemaNivel) {
-        super(inventario);            // ← fix del error
+                    Inventario inventario) {
+        super(inventario);
         this.nombre = nombre;
         this.fuerza = fuerza;
         this.armaduraBase = armaduraBase;
         this.hpMaximo = 100;
         this.hpActual = 100;
-        this.sistemaNivel = sistemaNivel;
     }
 
     @Override
@@ -33,25 +31,25 @@ public class guerrero extends Personaje implements Combatiente {
     @Override
     public void atacar(Combatiente objetivo) {
         int dano = calcularAtaque();
-        System.out.println(nombre + " ataca con " + dano + " de daño!");
         objetivo.defender(dano);
     }
 
     @Override
     public void defender(int danoEntrante) {
         int danoFinal = Math.max(0, danoEntrante - calcularDefensa());
-        System.out.println(nombre + " recibe " + danoFinal + " de daño real.");
         recibirDanoFinal(danoFinal);
     }
 
     @Override
     protected void aplicarMejoraNivel() {
-        sistemaNivel.aplicarMejora(this);
+        this.fuerza += 5;
+        this.armaduraBase += 3;
+        this.hpMaximo += 20;
+        this.hpActual = this.hpMaximo;
     }
 
-    // Getters y setters
     public int getFuerza() { return fuerza; }
     public void setFuerza(int fuerza) { this.fuerza = fuerza; }
     public int getArmaduraBase() { return armaduraBase; }
-    public void setArmaduraBase(int armaduraBase) { this.armaduraBase = armaduraBase; }
+    public void setArmaduraBase(int a) { this.armaduraBase = a; }
 }

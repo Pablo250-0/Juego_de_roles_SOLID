@@ -1,6 +1,6 @@
-package modelo;
-import Interfaces.*;
-// Personaje.java
+package Interfaces;
+import modelo.*;
+
 public abstract class Personaje implements Combatiente {
     protected String nombre;
     protected int nivel;
