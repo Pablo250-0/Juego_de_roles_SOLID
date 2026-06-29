@@ -15,7 +15,7 @@ import modelo.magia.MagiaAire;
 import modelo.magia.MagiaTierra;
 import modelo.magia.IEspecialidadMagica;
 import vista.VistaConsola;
-
+import fabricas.CreadorGuerrero;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +45,8 @@ public class JuegoDeRoles {
 
         // Le inyectamos todas las magias al creador de magos
         registroClases.add(new CreadorMago(catalogoMagias));
-
+        registroClases.add(new CreadorMago(catalogoMagias));
+registroClases.add(new CreadorGuerrero());
        
         // Arrancamos el juego
         GestorJuego gestor = new GestorJuego(vista, motor, registroClases);
