@@ -84,4 +84,16 @@ public class DecoradorEstados implements Combatiente {
         return personajeBase.getHpActual();
     }
 
+    @Override
+    public int getManaActual() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getManaActual'");
+    }
+
+    @Override
+    public int getCooldown() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getCooldown'");
+    }
+
 }   

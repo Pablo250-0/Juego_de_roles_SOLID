@@ -21,33 +21,21 @@ public class JuegoDeRoles {
 
     public static void main(String[] args) {
 
-        // --- Inicialización ---
         IVistaCombate vista = new VistaConsola();
         Combate motor = new Combate(vista);
 
-        // --- Catálogo de magias ---
         List<IEspecialidadMagica> catalogoMagias = new ArrayList<>();
         catalogoMagias.add(new MagiaFuego());
         catalogoMagias.add(new MagiaAgua());
         catalogoMagias.add(new MagiaTierra());
         catalogoMagias.add(new MagiaAire());
 
-        // --- Registro de Clases con Decoradores ---
         List<ICreadorPersonaje> registroClases = new ArrayList<>();
 
-        // El Mago (recibe estados y sus ataques congelan)
-        ICreadorPersonaje creadorMago = new CreadorMago(catalogoMagias);
-        registroClases.add(new CreadorConEstados(creadorMago, vista));
+        registroClases.add(new CreadorConEstados(new CreadorMago(catalogoMagias), vista));
+        registroClases.add(new CreadorConEstados(new CreadorArquero(), vista));
+        registroClases.add(new CreadorConEstados(new CreadorGuerrero(), vista));
 
-        // El Arquero (solo recibe estados)
-        ICreadorPersonaje creadorArquero = new CreadorArquero();
-        registroClases.add(new CreadorConEstados(creadorArquero, vista));
-
-        // El Guerrero (solo recibe estados)
-        ICreadorPersonaje creadorGuerrero = new CreadorGuerrero();
-        registroClases.add(new CreadorConEstados(creadorGuerrero, vista));
-
-        // --- Inicio del Gestor ---
         GestorJuego gestor = new GestorJuego(vista, motor, registroClases);
         gestor.iniciar();
     }

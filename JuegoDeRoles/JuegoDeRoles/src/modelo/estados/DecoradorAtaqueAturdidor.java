@@ -1,16 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package modelo.estados;
 
 import interfaces.Combatiente;
 import interfaces.IVistaCombate;
 
-/**
- *
- * @author ASUS
- */
 public class DecoradorAtaqueAturdidor implements Combatiente {
 
     private final Combatiente base;
@@ -23,28 +15,25 @@ public class DecoradorAtaqueAturdidor implements Combatiente {
 
     @Override
     public void atacar(Combatiente objetivo) {
-        base.atacar(objetivo); // Golpe fuerte del guerrero
-        // Aplica aturdimiento por 1 turno al objetivo
+        base.atacar(objetivo);
         RegistroEstados.aplicarEstado(objetivo, new EstadoAturdido(1), vista);
     }
 
     @Override
-    public void defender(int danoEntrante) {
-        base.defender(danoEntrante);
-    }
+    public void defender(int danoEntrante) { base.defender(danoEntrante); }
 
     @Override
-    public boolean estaVivo() {
-        return base.estaVivo();
-    }
+    public boolean estaVivo() { return base.estaVivo(); }
 
     @Override
-    public String getNombre() {
-        return base.getNombre();
-    }
+    public String getNombre() { return base.getNombre(); }
 
     @Override
-    public int getHpActual() {
-        return base.getHpActual();
-    }
+    public int getHpActual() { return base.getHpActual(); }
+
+    @Override
+    public int getManaActual() { return base.getManaActual(); }
+
+    @Override
+    public int getCooldown() { return base.getCooldown(); }
 }
