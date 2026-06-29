@@ -1,16 +1,9 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package modelo.personajes;
 
 import interfaces.Combatiente;
+import interfaces.IVistaCombate;
 import modelo.magia.IEspecialidadMagica;
 
-/**
- *
- * @author ASUS
- */
 public class Mago extends Personajes {
 
     private int poderMagico;
@@ -18,7 +11,7 @@ public class Mago extends Personajes {
     private IEspecialidadMagica especialidad;
 
     public Mago(int poderMagico, int barreraMagica, IEspecialidadMagica especialidad, String nombre, int hpBase) {
-        super(nombre, hpBase);
+        super(nombre, hpBase, 80);
         this.poderMagico = poderMagico;
         this.barreraMagica = barreraMagica;
         this.especialidad = especialidad;
@@ -26,47 +19,56 @@ public class Mago extends Personajes {
 
     @Override
     public void atacar(Combatiente objetivo) {
-        // Delegamos el cálculo del daño al elemento mágico
-        // El mago no necesita saber si es fuego o agua, la interfaz lo resuelve
         int danoGenerado = this.especialidad.calcularDanoElemental(this.poderMagico);
-
-        // Aplicamos el daño al objetivo
-        // no nos importa si el objetivo es un Guerrero o un Monstruo.
         objetivo.defender(danoGenerado);
-
     }
 
     @Override
-    public void defender(int danoEntrante) {
-        // La barrera mágica del mago absorbe parte del daño entrante.
-        int danoFinal = Math.max(0, danoEntrante - this.barreraMagica);
-
-        // Usamos el método centralizado de la clase padre Personajes para alterar el HP.
+    public void defender(int danioEntrante) {
+        int danoFinal = Math.max(0, danioEntrante - this.barreraMagica);
         recibirDano(danoFinal);
+    }
 
+    @Override
+    public int getCostoMana() {
+        return 40;
+    }
+
+    @Override
+    public int getCooldownMaximo() {
+        return 3;
+    }
+
+    @Override
+    protected void ejecutarHabilidadEspecial(Combatiente objetivo, IVistaCombate vista) {
+        int dano = this.especialidad.calcularDanoElemental(this.poderMagico * 2);
+        vista.mostrarMensaje(nombre + " usa ¡EXPLOSIÓN ELEMENTAL de " + especialidad.getNombreElemento()
+                + "! " + especialidad.obtenerEfectoVisual() + " causando " + dano + " de daño.");
+        objetivo.defender(dano);
     }
 
     @Override
     protected void aplicarMejoraNivel() {
-        // Crecimiento de estadísticas exclusivo del Mago
-        this.poderMagico += 15;     // El mago prioriza el daño mágico
-        this.barreraMagica += 5;    // Mejora ligeramente su defensa
-        this.hpMaximo += 20;        // Aumenta su vida base
-
-        // Curación al subir de nivel (mecánica clásica de RPG)
+        this.poderMagico += 15;
+        this.barreraMagica += 5;
+        this.hpMaximo += 20;
+        this.manaMaximo += 15;
         this.hpActual = this.hpMaximo;
+        this.manaActual = this.manaMaximo;
     }
 
-    // Este getter será vital para que la VistaConsola pueda imprimir qué tipo de magia usó.
     public IEspecialidadMagica getEspecialidad() {
         return this.especialidad;
     }
-@Override
+
+    @Override
     public String toString() {
         return "Mago [" + nombre + "] | Nivel: " + nivel
                 + " | Vida: " + hpActual + "/" + hpMaximo
+                + " | Maná: " + manaActual + "/" + manaMaximo
                 + " | Poder Mágico: " + poderMagico
                 + " | Barrera: " + barreraMagica
-                + " | Especialidad: " + especialidad.getNombreElemento();
+                + " | Especialidad: " + especialidad.getNombreElemento()
+                + " | Cooldown: " + cooldownHabilidad;
     }
 }

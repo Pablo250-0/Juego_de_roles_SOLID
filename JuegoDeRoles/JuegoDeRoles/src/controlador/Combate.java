@@ -1,20 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controlador;
 
 import interfaces.Combatiente;
 import interfaces.IVistaCombate;
+import modelo.personajes.Personajes;
 
-/**
- *
- * @author ASUS
- */
 public class Combate {
 
-    // la clase combate no sabe COMO se imprime, solo sabe a QUIEN mandarle 
-    // el texto
     private final IVistaCombate vista;
 
     public Combate(IVistaCombate vista) {
@@ -25,50 +16,57 @@ public class Combate {
         vista.mostrarMensaje("===================================");
         vista.mostrarMensaje("       LA BATALLA COMIENZA          ");
         vista.mostrarMensaje("===================================");
-        vista.mostrarMensaje(p1.getNombre() + "VS" + p2.getNombre());
+        vista.mostrarMensaje(p1.getNombre() + " VS " + p2.getNombre());
         vista.mostrarMensaje("------------------------------------");
 
         int turno = 1;
 
-        // bucle de combate: Continua mientras AMBOS esten vivos
         while (p1.estaVivo() && p2.estaVivo()) {
             vista.mostrarMensaje("\n-- RONDA " + turno + " --");
             vista.mostrarEstado(p1, p2);
 
-            // turno del personaje 1
             ejecutarTurno(p1, p2);
-            // verificamos si el personaje 2 esta vivo
-            if (!p2.estaVivo()) {
-                break;
-            }
+            if (!p2.estaVivo()) break;
+
             ejecutarTurno(p2, p1);
+
+            if (p1 instanceof Personajes) {
+                ((Personajes) p1).recuperarMana(10);
+                ((Personajes) p1).reducirCooldown();
+            }
+            if (p2 instanceof Personajes) {
+                ((Personajes) p2).recuperarMana(10);
+                ((Personajes) p2).reducirCooldown();
+            }
+
             turno++;
         }
-        // la batalla termino, evaluamos al ganador
-        evaluarGanador(p1, p2);
 
+        evaluarGanador(p1, p2);
     }
 
     private void ejecutarTurno(Combatiente atacante, Combatiente defensor) {
-        vista.mostrarMensaje(atacante.getNombre() + " lanza su ataque contra "
-                + defensor.getNombre());
+        vista.mostrarMensaje(atacante.getNombre() + " lanza su ataque contra " + defensor.getNombre());
 
-        atacante.atacar(defensor);
+        boolean usóHabilidad = false;
 
-        // mostramos como quedo la vida del defensor tra el ataque
-        vista.mostrarMensaje("La salud de " + defensor.getNombre() + " baja a "
-                + defensor.getHpActual() + "HP");
+        if (atacante instanceof Personajes) {
+            usóHabilidad = ((Personajes) atacante).usarHabilidadEspecial(defensor, vista);
+        }
 
-    }
-    private void evaluarGanador(Combatiente p1, Combatiente p2){
-    Combatiente ganador = p1.estaVivo() ? p1 : p2;
-    Combatiente perdedor = p1.estaVivo() ? p2 : p1;
-    
-    vista.mostrarMensaje("\n====================================");
-    vista.mostrarMensaje(perdedor.getNombre() + " ha caido");
-    vista.mostrarMensaje("El ganador es " + ganador.getNombre().toUpperCase());
-    
-    
+        if (!usóHabilidad) {
+            atacante.atacar(defensor);
+        }
+
+        vista.mostrarMensaje("La salud de " + defensor.getNombre() + " baja a " + defensor.getHpActual() + " HP");
     }
 
+    private void evaluarGanador(Combatiente p1, Combatiente p2) {
+        Combatiente ganador = p1.estaVivo() ? p1 : p2;
+        Combatiente perdedor = p1.estaVivo() ? p2 : p1;
+
+        vista.mostrarMensaje("\n====================================");
+        vista.mostrarMensaje(perdedor.getNombre() + " ha caido");
+        vista.mostrarMensaje("El ganador es " + ganador.getNombre().toUpperCase());
+    }
 }

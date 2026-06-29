@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controlador;
 
 import fabricas.ICreadorPersonaje;
@@ -10,10 +6,6 @@ import interfaces.IVistaCombate;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- *
- * @author ASUS
- */
 public class GestorJuego {
 
     private final IVistaCombate vista;
@@ -39,14 +31,12 @@ public class GestorJuego {
         vista.mostrarMensaje("\nPreparando el escenario de batalla...");
         motor.iniciarBatalla(p1, p2);
     }
-    
 
     private Combatiente configurarJugador(String titulo) {
         vista.mostrarMensaje("\n--- " + titulo + " ---");
         vista.mostrarMensaje("Ingrese el nombre de su personaje:");
         String nombre = scanner.nextLine();
 
-        // Elegir Clase Base
         vista.mostrarMensaje("Elija su clase base:");
         for (int i = 0; i < clasesDisponibles.size(); i++) {
             vista.mostrarMensaje((i + 1) + ". " + clasesDisponibles.get(i).getNombreClaseMenu());
@@ -54,7 +44,6 @@ public class GestorJuego {
         int opcionClase = Integer.parseInt(scanner.nextLine()) - 1;
         ICreadorPersonaje creadorElegido = clasesDisponibles.get(opcionClase);
 
-        // Elegir Especialidad (Solo si la clase lo requiere)
         int opcionSubMenu = 0;
         if (creadorElegido.requiereSubMenu()) {
             vista.mostrarMensaje("Elija la especialidad para su " + creadorElegido.getNombreClaseMenu() + ":");
