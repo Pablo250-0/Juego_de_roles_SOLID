@@ -84,4 +84,4 @@ public class DecoradorEstados implements Combatiente {
         return personajeBase.getHpActual();
     }
 
-}
+}   
