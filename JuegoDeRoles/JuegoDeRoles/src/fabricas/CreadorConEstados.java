@@ -6,8 +6,10 @@ package fabricas;
 
 import interfaces.Combatiente;
 import interfaces.IVistaCombate;
-import modelo.estados.DecoradorEstados;
-
+import modelo.estados.DecoradorAtaqueCongelante;
+import modelo.estados.DecoradorReceptorEstados;
+import modelo.estados.DecoradorAtaqueVenenoso;
+import modelo.estados.DecoradorAtaqueAturdidor;
 
 /**
  *
@@ -40,11 +42,24 @@ public class CreadorConEstados implements ICreadorPersonaje {
 
     @Override
     public Combatiente crear(String nombreJugador, int opcionSubMenu) {
-        // crea al personaje puro (Mago, Arquero o Guerrero)
-        Combatiente personajeBase = creadorOriginal.crear(nombreJugador, opcionSubMenu);
 
-        // Lo envolvemos en nuestra armadura de estados
-        DecoradorEstados personajeDecorado = new DecoradorEstados(personajeBase, vista);
-        return personajeDecorado;
+        // Creamos al personaje
+        Combatiente personaje = creadorOriginal.crear(nombreJugador, opcionSubMenu);
+
+        // CAPA DEFENSIVA: Todos pueden sufrir estados
+        personaje = new DecoradorReceptorEstados(personaje, vista);
+
+        // CAPA OFENSIVA: Le damos su habilidad especial según la clase
+        String nombreClase = creadorOriginal.getNombreClaseMenu();
+
+        if (nombreClase.equals("Mago")) {
+            personaje = new DecoradorAtaqueCongelante(personaje, vista);
+        } else if (nombreClase.equals("Arquero")) {
+            personaje = new DecoradorAtaqueVenenoso(personaje, vista);
+        } else if (nombreClase.equals("Guerrero")) {
+            personaje = new DecoradorAtaqueAturdidor(personaje, vista);
+        }
+
+        return personaje;
     }
 }

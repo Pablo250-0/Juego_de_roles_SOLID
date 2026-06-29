@@ -11,26 +11,23 @@ import interfaces.IVistaCombate;
  *
  * @author ASUS
  */
-public class DecoradorAtaqueCongelante implements Combatiente {
+public class DecoradorAtaqueVenenoso implements Combatiente {
 
     private final Combatiente base;
     private final IVistaCombate vista;
 
-    public DecoradorAtaqueCongelante(Combatiente base, IVistaCombate vista) {
+    public DecoradorAtaqueVenenoso(Combatiente base, IVistaCombate vista) {
         this.base = base;
         this.vista = vista;
     }
 
     @Override
     public void atacar(Combatiente objetivo) {
-        // El personaje base hace su ataque normal y genera su daño
-        base.atacar(objetivo);
-        // Inyectamos el estado alterado en el objetivo usando nuestro Registro Global
-        // Aplicamos 1 turno de congelación al objetivo
-        RegistroEstados.aplicarEstado(objetivo, new EstadoCongelado(1), vista);
+        base.atacar(objetivo); // Ataque normal de flecha
+        // Aplica veneno por 3 turnos al objetivo
+        RegistroEstados.aplicarEstado(objetivo, new EstadoEnvenenado(3), vista);
     }
 
-    // --- DELEGACIÓN ABSOLUTA A LA CLASE BASE ---
     @Override
     public void defender(int danoEntrante) {
         base.defender(danoEntrante);
