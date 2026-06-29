@@ -61,5 +61,12 @@ public class Mago extends Personajes {
     public IEspecialidadMagica getEspecialidad() {
         return this.especialidad;
     }
-
+@Override
+    public String toString() {
+        return "Mago [" + nombre + "] | Nivel: " + nivel
+                + " | Vida: " + hpActual + "/" + hpMaximo
+                + " | Poder Mágico: " + poderMagico
+                + " | Barrera: " + barreraMagica
+                + " | Especialidad: " + especialidad.getNombreElemento();
+    }
 }
