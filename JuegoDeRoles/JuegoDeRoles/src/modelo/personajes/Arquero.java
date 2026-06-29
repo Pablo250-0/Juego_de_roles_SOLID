@@ -1,15 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package modelo.personajes;
 
 import interfaces.Combatiente;
+import interfaces.IVistaCombate;
 
-/**
- *
- * @author ASUS
- */
 public class Arquero extends Personajes {
 
     private int flechas;
@@ -17,7 +10,7 @@ public class Arquero extends Personajes {
     private int armadura;
 
     public Arquero(int flechas, int punteria, int armadura, String nombre, int hpBase) {
-        super(nombre, hpBase);
+        super(nombre, hpBase, 50);
         this.flechas = flechas;
         this.punteria = punteria;
         this.armadura = armadura;
@@ -50,45 +43,66 @@ public class Arquero extends Personajes {
     @Override
     public void atacar(Combatiente objetivo) {
         int danoGenerado;
-
         if (flechas > 0) {
             flechas--;
-            danoGenerado = punteria; //  usamos punteria como base de dano
+            danoGenerado = punteria;
         } else {
             System.out.println(nombre + " se quedó sin flechas.");
             danoGenerado = punteria / 2;
         }
-
         objetivo.defender(danoGenerado);
     }
 
     @Override
-    public void defender(int danoEntrante) {
-        // La armadura del arquero absorbe parte del daño entrante, igual que
-        // la barrera mágica hace con el Mago.
-        int danoFinal = Math.max(0, danoEntrante - this.armadura);
+    public void defender(int danioEntrante) {
+        int danoFinal = Math.max(0, danioEntrante - this.armadura);
         recibirDano(danoFinal);
     }
 
     @Override
+    public int getCostoMana() {
+        return 25;
+    }
+
+    @Override
+    public int getCooldownMaximo() {
+        return 2;
+    }
+
+    @Override
+    protected void ejecutarHabilidadEspecial(Combatiente objetivo, IVistaCombate vista) {
+        if (flechas >= 3) {
+            flechas -= 3;
+            int dano = punteria * 3;
+            vista.mostrarMensaje(nombre + " usa ¡LLUVIA DE FLECHAS! disparando 3 flechas por " + dano + " de daño total.");
+            objetivo.defender(dano);
+        } else {
+            int danoReducido = punteria * Math.max(1, flechas);
+            vista.mostrarMensaje(nombre + " usa LLUVIA DE FLECHAS con pocas flechas (" + flechas + "), causando " + danoReducido + " de daño.");
+            flechas = 0;
+            objetivo.defender(danoReducido);
+        }
+    }
+
+    @Override
     protected void aplicarMejoraNivel() {
-        // Crecimiento de estadísticas exclusivo del Arquero
         this.punteria += 5;
         this.flechas += 10;
         this.armadura += 3;
         this.hpMaximo += 15;
-
-        // Curación al subir de nivel (mismo criterio que el Mago)
+        this.manaMaximo += 10;
         this.hpActual = this.hpMaximo;
+        this.manaActual = this.manaMaximo;
     }
 
     @Override
     public String toString() {
         return "Arquero [" + nombre + "] | Nivel: " + nivel
                 + " | Vida: " + hpActual + "/" + hpMaximo
+                + " | Maná: " + manaActual + "/" + manaMaximo
                 + " | Flechas: " + flechas
                 + " | Puntería: " + punteria
-                + " | Armadura: " + armadura;
+                + " | Armadura: " + armadura
+                + " | Cooldown: " + cooldownHabilidad;
     }
-
 }

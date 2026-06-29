@@ -1,16 +1,8 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package modelo.personajes;
 
 import interfaces.Combatiente;
 import interfaces.IVistaCombate;
 
-/**
- *
- * @author ASUS
- */
 public abstract class Personajes implements Combatiente {
 
     protected String nombre;
@@ -20,15 +12,22 @@ public abstract class Personajes implements Combatiente {
     protected int experiencia;
     protected int experienciaRequerida;
 
-    public Personajes(String nombre, int hpBase) {
+    protected int manaMaximo;
+    protected int manaActual;
+
+    protected int cooldownHabilidad;
+
+    public Personajes(String nombre, int hpBase, int manaBase) {
         this.nombre = nombre;
         this.nivel = 1;
         this.hpMaximo = hpBase;
         this.hpActual = hpBase;
+        this.manaMaximo = manaBase;
+        this.manaActual = manaBase;
+        this.cooldownHabilidad = 0;
         this.experiencia = 0;
         this.experienciaRequerida = 100;
     }
-    // --- IMPLEMENTACIÓN DE MÉTODOS COMUNES DE LA INTERFAZ ---
 
     @Override
     public String getNombre() {
@@ -45,12 +44,45 @@ public abstract class Personajes implements Combatiente {
         return this.hpActual > 0;
     }
 
-    // Método centralizado y protegido para evitar que otras clases manipulen la vida
+    @Override
+    public int getManaActual() {
+        return this.manaActual;
+    }
+
+    @Override
+    public int getCooldown() {
+        return this.cooldownHabilidad;
+    }
+
+    public boolean usarHabilidadEspecial(Combatiente objetivo, IVistaCombate vista) {
+        if (cooldownHabilidad > 0) {
+            vista.mostrarMensaje("  [" + nombre + "] Habilidad en cooldown (" + cooldownHabilidad + " turnos restantes). Ataque normal.");
+            return false;
+        }
+        if (manaActual < getCostoMana()) {
+            vista.mostrarMensaje("  [" + nombre + "] Maná insuficiente (" + manaActual + "/" + getCostoMana() + "). Ataque normal.");
+            return false;
+        }
+        manaActual -= getCostoMana();
+        cooldownHabilidad = getCooldownMaximo();
+        ejecutarHabilidadEspecial(objetivo, vista);
+        return true;
+    }
+
+    public void reducirCooldown() {
+        if (cooldownHabilidad > 0) {
+            cooldownHabilidad--;
+        }
+    }
+
+    public void recuperarMana(int cantidad) {
+        manaActual = Math.min(manaMaximo, manaActual + cantidad);
+    }
+
     protected void recibirDano(int danoFinal) {
         this.hpActual = Math.max(0, this.hpActual - danoFinal);
     }
 
-    // Progresión (SRP: El personaje gestiona su propia XP)
     public void ganarExperiencia(int xp, IVistaCombate vista) {
         this.experiencia += xp;
         vista.mostrarMensaje(this.nombre + " obtuvo " + xp + " puntos de experiencia.");
@@ -62,7 +94,7 @@ public abstract class Personajes implements Combatiente {
             this.nivel++;
             this.experiencia -= this.experienciaRequerida;
             this.experienciaRequerida += 50;
-            aplicarMejoraNivel(); // Llama a la lógica de la clase hija
+            aplicarMejoraNivel();
             vista.mostrarMensaje("¡NUEVO NIVEL! " + this.nombre + " alcanzó el nivel " + this.nivel);
         }
     }
@@ -71,8 +103,13 @@ public abstract class Personajes implements Combatiente {
     public abstract void atacar(Combatiente objetivo);
 
     @Override
-    public abstract void defender(int danoEntrante);
+    public abstract void defender(int danioEntrante);
 
-    // Este no es de la interfaz, pero es obligatorio para que las clases hijas mejoren sus stats
     protected abstract void aplicarMejoraNivel();
+
+    public abstract int getCostoMana();
+
+    public abstract int getCooldownMaximo();
+
+    protected abstract void ejecutarHabilidadEspecial(Combatiente objetivo, IVistaCombate vista);
 }
